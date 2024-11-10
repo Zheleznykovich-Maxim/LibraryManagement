@@ -1,8 +1,10 @@
-version: '3.7'
+version: '3.8'
 
 services:
   movie_service:
-    build: ./movie-service
+    build:
+      context: ./movie-service
+      dockerfile: Dockerfile
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     volumes:
       - ./movie-service/:/app/
@@ -24,7 +26,9 @@ services:
       - POSTGRES_DB=movie_db_dev
 
   cast_service:
-    build: ./cast-service
+    build:
+      context: ./cast-service
+      dockerfile: Dockerfile
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     volumes:
       - ./cast-service/:/app/
@@ -44,6 +48,66 @@ services:
       - POSTGRES_PASSWORD=cast_db_password
       - POSTGRES_DB=cast_db_dev
 
+  book_service:
+    build:
+      context: ./book-service
+      dockerfile: Dockerfile
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - ./book-service/:/app/
+    ports:
+      - 8003:8000
+    environment:
+      - DATABASE_URI=postgresql://book_db_username:book_db_password@book_db/book_db_dev
+    depends_on:
+      - book_db
+
+  book_db:
+    image: postgres:12.1-alpine
+    volumes:
+      - postgres_data_book:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=book_db_username
+      - POSTGRES_PASSWORD=book_db_password
+      - POSTGRES_DB=book_db_dev
+
+  auth_service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - ./auth-service/:/app/
+    ports:
+      - 8004:8000
+    environment:
+      - DATABASE_URI=postgresql://auth_db_username:auth_db_password@auth_db/auth_db_dev
+    depends_on:
+      - auth_db
+
+  auth_db:
+    image: postgres:12.1-alpine
+    volumes:
+      - postgres_data_auth:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=auth_db_username
+      - POSTGRES_PASSWORD=auth_db_password
+      - POSTGRES_DB=auth_db_dev
+
+  user_service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - ./user-service/:/app/
+    ports:
+      - 8005:8000
+    environment:
+      - DATABASE_URI=postgresql://auth_db_username:auth_db_password@auth_db/auth_db_dev
+    depends_on:
+      - auth_db
+
   nginx:
     image: nginx:latest
     ports:
@@ -53,7 +117,12 @@ services:
     depends_on:
       - cast_service
       - movie_service
+      - book_service
+      - auth_service
+      - user_service
 
 volumes:
   postgres_data_movie:
   postgres_data_cast:
+  postgres_data_book:
+  postgres_data_auth:
