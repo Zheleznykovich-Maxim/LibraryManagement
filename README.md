@@ -1,8 +1,32 @@
-# python-microservice-fastapi
-Learn to build your own microservice using Python and FastAPI
+# LibraryManagement
+#### Микросервисное приложение для управления библиотекой книг.
 
-## How to run??
- - Make sure you have installed `docker` and `docker-compose`
- - Run `docker-compose up -d`
- - Head over to http://localhost:8080/api/v1/movies/docs for movie service docs 
-   and http://localhost:8080/api/v1/casts/docs for cast service docs
+## 1. Сервис авторизации и регистрации пользователей:
+### Эндпоинты:
+POST /register: Регистрация нового пользователя. Принимает email и пароль.\
+POST /login: Авторизация пользователя. Возвращает токен (JWT).\
+GET /profile: Получение информации о профиле (требуется аутентификация).\
+
+## 2. Сервис управления книгами:
+### Эндпоинты:
+GET /books: Получение списка книг (с возможностью фильтрации по автору и жанру). (Данные должны кешироваться).\
+POST /books: Добавление новой книги в библиотеку.\
+PUT /books/{book_id}: Обновление информации о книге по ID.\
+DELETE /books/{book_id}: Удаление книги по ID.\
+
+## 3. Сервис управления заказами книг:
+### Эндпоинты:
+GET /orders: Получение списка заказов книг для авторизованного пользователя.\
+POST /orders: Создание нового заказа на книгу.\
+PUT /orders/{order_id}: Обновление заказа по ID.\
+DELETE /orders/{order_id}: Отмена заказа по ID.\
+
+## 4. Сервис поиска пользователей:
+### Эндпоинты:
+GET /users: Поиск пользователей по имени или email. (Можно добавить поддержку пагинации).\
+GET /users/{user_id}: Получение информации о пользователе по ID.\
+GET /users/me: Получение информации о текущем авторизованном пользователе.\
+
+# Для запуска докера: docker-compose up -d
+# Для остановки докера: docker-compose down
+# Для билда докера (Опционально) docker-compose build
