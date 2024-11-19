@@ -108,6 +108,30 @@ services:
     depends_on:
       - auth_db
 
+  order_service:
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - ./order-service/:/app/
+    ports:
+      - 8006:8000
+    environment:
+      - DATABASE_URI=postgresql://order_db_username:order_db_password@order_db/order_db_dev
+      - BOOK_SERVICE_HOST_URL=http://book_service:8000/api/v1/books/
+    depends_on:
+      - order_db
+
+  order_db:
+    image: postgres:12.1-alpine
+    volumes:
+      - postgres_data_order:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=order_db_username
+      - POSTGRES_PASSWORD=order_db_password
+      - POSTGRES_DB=order_db_dev
+
   nginx:
     image: nginx:latest
     ports:
@@ -120,9 +144,11 @@ services:
       - book_service
       - auth_service
       - user_service
+      - order_service
 
 volumes:
   postgres_data_movie:
   postgres_data_cast:
   postgres_data_book:
   postgres_data_auth:
+  postgres_data_order:
