@@ -1,6 +1,6 @@
 
 from app.api.models import UserIn, UserOut
-from app.api.db import database, users
+from app.api.db import database
 from datetime import datetime, timedelta
 import jwt
 

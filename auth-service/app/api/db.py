@@ -17,5 +17,5 @@ users = Table(
     Column('email', String, unique=True, index=True),
     Column('password', String)
 )
-
+# users.drop(engine)
 database = Database(DATABASE_URI)

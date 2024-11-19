@@ -43,7 +43,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         )
 
 
-@users.get('/')
+@users.get('/', response_model=List[UserOut])
 async def get_users(current_user: User = Depends(oauth2_scheme)):
     users_list = await db_manager.get_all_users()
     return users_list
