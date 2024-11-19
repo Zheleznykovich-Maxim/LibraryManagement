@@ -27,6 +27,6 @@ GET /users: Поиск пользователей по имени или email. 
 GET /users/{user_id}: Получение информации о пользователе по ID.\
 GET /users/me: Получение информации о текущем авторизованном пользователе.\
 
-# Для запуска докера: docker-compose up -d
-# Для остановки докера: docker-compose down
-# Для билда докера (Опционально) docker-compose build
+#### Для запуска докера: `docker-compose up -d`
+#### Для остановки докера: `docker-compose down`
+#### Для билда докера (Опционально) `docker-compose build`
