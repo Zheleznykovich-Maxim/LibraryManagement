@@ -18,3 +18,4 @@ class OrderOut(OrderIn):
 
 class OrderUpdate(OrderIn):
     status: Optional[str]
+    books_id: List[int]

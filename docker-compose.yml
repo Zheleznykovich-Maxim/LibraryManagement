@@ -1,52 +1,6 @@
 version: '3.8'
 
 services:
-  movie_service:
-    build:
-      context: ./movie-service
-      dockerfile: Dockerfile
-    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-    volumes:
-      - ./movie-service/:/app/
-    ports:
-      - 8001:8000
-    environment:
-      - DATABASE_URI=postgresql://movie_db_username:movie_db_password@movie_db/movie_db_dev
-      - CAST_SERVICE_HOST_URL=http://cast_service:8000/api/v1/casts/
-    depends_on:
-      - movie_db
-
-  movie_db:
-    image: postgres:12.1-alpine
-    volumes:
-      - postgres_data_movie:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=movie_db_username
-      - POSTGRES_PASSWORD=movie_db_password
-      - POSTGRES_DB=movie_db_dev
-
-  cast_service:
-    build:
-      context: ./cast-service
-      dockerfile: Dockerfile
-    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-    volumes:
-      - ./cast-service/:/app/
-    ports:
-      - 8002:8000
-    environment:
-      - DATABASE_URI=postgresql://cast_db_username:cast_db_password@cast_db/cast_db_dev
-    depends_on:
-      - cast_db
-
-  cast_db:
-    image: postgres:12.1-alpine
-    volumes:
-      - postgres_data_cast:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=cast_db_username
-      - POSTGRES_PASSWORD=cast_db_password
-      - POSTGRES_DB=cast_db_dev
 
   book_service:
     build:
@@ -59,8 +13,11 @@ services:
       - 8003:8000
     environment:
       - DATABASE_URI=postgresql://book_db_username:book_db_password@book_db/book_db_dev
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
       - book_db
+      - redis
 
   book_db:
     image: postgres:12.1-alpine
@@ -82,8 +39,11 @@ services:
       - 8004:8000
     environment:
       - DATABASE_URI=postgresql://auth_db_username:auth_db_password@auth_db/auth_db_dev
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
       - auth_db
+      - redis
 
   auth_db:
     image: postgres:12.1-alpine
@@ -105,8 +65,11 @@ services:
       - 8005:8000
     environment:
       - DATABASE_URI=postgresql://auth_db_username:auth_db_password@auth_db/auth_db_dev
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
       - auth_db
+      - redis
 
   order_service:
     build:
@@ -120,8 +83,11 @@ services:
     environment:
       - DATABASE_URI=postgresql://order_db_username:order_db_password@order_db/order_db_dev
       - BOOK_SERVICE_HOST_URL=http://book_service:8000/api/v1/books/
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
       - order_db
+      - redis
 
   order_db:
     image: postgres:12.1-alpine
@@ -132,6 +98,12 @@ services:
       - POSTGRES_PASSWORD=order_db_password
       - POSTGRES_DB=order_db_dev
 
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
   nginx:
     image: nginx:latest
     ports:
@@ -139,16 +111,12 @@ services:
     volumes:
       - ./nginx_config.conf:/etc/nginx/conf.d/default.conf
     depends_on:
-      - cast_service
-      - movie_service
       - book_service
       - auth_service
       - user_service
       - order_service
 
 volumes:
-  postgres_data_movie:
-  postgres_data_cast:
   postgres_data_book:
   postgres_data_auth:
   postgres_data_order:

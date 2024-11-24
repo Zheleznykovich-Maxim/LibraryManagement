@@ -8,3 +8,4 @@ passlib[bcrypt]==1.7.1
 passlib==1.7.1
 bcrypt
 pyjwt==2.9.0
+aioredis==2.0.1

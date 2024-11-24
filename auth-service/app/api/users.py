@@ -5,7 +5,8 @@ from fastapi.params import Depends
 from fastapi.security import OAuth2PasswordBearer
 from starlette import status
 import jwt
-
+import aioredis
+import json
 
 # Секретный ключ для токенов
 SECRET_KEY = "your_secret_key"
@@ -13,6 +14,11 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+# Подключение к Redis
+REDIS_HOST = "redis"
+REDIS_PORT = 6379
+redis = aioredis.from_url(f"redis://{REDIS_HOST}:{REDIS_PORT}", decode_responses=True)
 
 users = FastAPI()
 
@@ -28,6 +34,10 @@ async def register_user(payload: UserIn):
     hashed_password = db_manager.get_password_hash(payload.password)
     payload.password = hashed_password
     user_id = await db_manager.create_user(payload)
+
+    # Удаляем кэш, чтобы данные обновились
+    cache_key = f"user:id:{user_id}"
+    redis.delete(cache_key)
 
     response = {
         'id': user_id,
@@ -50,7 +60,6 @@ async def login(payload: UserIn):
         )
     access_token = db_manager.create_access_token(data={"sub": user['email']})
     return {"access_token": access_token, "token_type": "bearer"}
-
 
 # Зависимость для проверки токена
 async def get_current_user(token: str = Depends(oauth2_scheme)):
