@@ -1,9 +1,8 @@
 import os
 
-from sqlalchemy import (Column, Integer, MetaData, String, Table,
-                        create_engine, ARRAY, Float)
-
 from databases import Database
+from sqlalchemy import (Column, Integer, MetaData, String, Table,
+                        create_engine)
 
 DATABASE_URI = os.getenv('DATABASE_URI')
 

@@ -1,7 +1,6 @@
-from app.api.models import BookIn, BookOut, BookUpdate
-from app.api.db import books, database
-
 from app.api.db import books
+from app.api.db import database
+from app.api.models import BookIn
 
 
 async def add_book(payload: BookIn):
@@ -9,17 +8,21 @@ async def add_book(payload: BookIn):
 
     return await database.execute(query=query)
 
+
 async def get_book(id):
-    query = books.select(books.c.id==id)
+    query = books.select(books.c.id == id)
     return await database.fetch_one(query=query)
+
 
 async def get_all_books():
     query = books.select()
     return await database.fetch_all(query=query)
 
+
 async def delete_book(id: int):
-    query = books.delete().where(books.c.id==id)
+    query = books.delete().where(books.c.id == id)
     return await database.execute(query=query)
+
 
 async def update_book(id: int, payload: BookIn):
     query = (

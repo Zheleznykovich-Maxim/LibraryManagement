@@ -1,7 +1,6 @@
-from app.api.models import OrderIn, OrderOut, OrderUpdate
-from app.api.db import orders, database
-
+from app.api.db import database
 from app.api.db import orders
+from app.api.models import OrderIn
 
 
 async def add_order(payload: OrderIn):
@@ -9,17 +8,21 @@ async def add_order(payload: OrderIn):
 
     return await database.execute(query=query)
 
+
 async def get_order(id):
-    query = orders.select(orders.c.id==id)
+    query = orders.select(orders.c.id == id)
     return await database.fetch_one(query=query)
+
 
 async def get_all_orders():
     query = orders.select()
     return await database.fetch_all(query=query)
 
+
 async def delete_order(id: int):
-    query = orders.delete().where(orders.c.id==id)
+    query = orders.delete().where(orders.c.id == id)
     return await database.execute(query=query)
+
 
 async def update_order(id: int, payload: OrderIn):
     query = (

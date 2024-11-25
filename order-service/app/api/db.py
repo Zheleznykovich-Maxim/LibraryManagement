@@ -1,12 +1,8 @@
 import os
-from datetime import date, datetime
-
-from sqlalchemy import (Column, Integer, MetaData, String, Table,
-                        create_engine, ARRAY, Float, DateTime, func)
 
 from databases import Database
-from sqlalchemy.dialects.mysql import DATETIME
-from sqlalchemy.util import timezone
+from sqlalchemy import (Column, Integer, MetaData, String, Table,
+                        create_engine, ARRAY, DateTime, func)
 
 DATABASE_URI = os.getenv('DATABASE_URI')
 
@@ -21,5 +17,5 @@ orders = Table(
     Column('status', String(30)),
     Column('books_id', ARRAY(Integer))
 )
-# orders.drop(engine)
+
 database = Database(DATABASE_URI)

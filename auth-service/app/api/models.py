@@ -12,10 +12,10 @@ class UserOut(BaseModel):
     class Config:
         orm_mode = True
 
-# Модель пользователя для работы с аутентификацией
+
 class User(BaseModel):
     id: int
     email: str
 
     class Config:
-        orm_mode = True  # Для работы с ORM
+        orm_mode = True

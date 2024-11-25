@@ -1,9 +1,10 @@
-from pydantic import BaseModel, EmailStr, validate_email
+from pydantic import BaseModel
 
 
 class UserIn(BaseModel):
     email: str
     password: str
+
 
 class UserOut(BaseModel):
     id: int
@@ -12,10 +13,10 @@ class UserOut(BaseModel):
     class Config:
         orm_mode = True
 
-# Модель пользователя для работы с аутентификацией
+
 class User(BaseModel):
     id: int
     email: str
 
     class Config:
-        orm_mode = True  # Для работы с ORM
+        orm_mode = True

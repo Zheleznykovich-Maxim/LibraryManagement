@@ -1,5 +1,7 @@
+from typing import Optional
+
 from pydantic import BaseModel
-from typing import List, Optional
+
 
 class BookIn(BaseModel):
     title: str
@@ -16,6 +18,7 @@ class BookOut(BookIn):
     genre: str
     price: float
     description: str
+
 
 class BookUpdate(BookIn):
     title: Optional[str] = None
