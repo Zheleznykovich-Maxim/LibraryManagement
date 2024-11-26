@@ -54,7 +54,9 @@ async def get_book(
         id: int,
         current_user: str = Depends(oauth2_scheme)
 ):
+
     cache_key = f"book:{id}"
+    await redis.delete(cache_key)
     cached_book = await redis.get(cache_key)
     if cached_book:
         book = json.loads(cached_book)

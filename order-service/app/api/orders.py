@@ -67,8 +67,9 @@ async def get_orders(current_user: str = Depends(oauth2_scheme)):
 
 @orders.get('/{id}/', response_model=OrderOut)
 async def get_order(id: int):
-    cached_order = await redis.get(f"order:{id}")
-
+    cache_key = f"order:{id}"
+    await redis.delete(cache_key)
+    cached_order = await redis.get(cache_key)
     if cached_order:
         order = json.loads(cached_order)
         return OrderOut(**order)
@@ -100,7 +101,7 @@ async def update_order(id: int, payload: OrderUpdate):
 
     cache_key = f"order:id:{id}"
     await redis.set(cache_key, json.dumps(result, default=serialize_datetime), ex=3600)
-
+    await redis.delete("orders:all")
     return result
 
 
